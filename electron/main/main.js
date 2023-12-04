@@ -32,8 +32,6 @@ const createWindow = () => {
 		content.openDevTools()
 		win.loadURL("http://localhost:5173/")
 	}else{
-		let content = win.webContents
-		content.openDevTools()
 		win.loadFile(indexHtml)
 	}
 

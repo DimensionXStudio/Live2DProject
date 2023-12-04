@@ -50,7 +50,7 @@ html, body{
     height: 100%;
     margin: 0;
     padding: 0;
-    background-color: #2b2d30;
+    background-color: rgba(0, 0, 0, 0);
     overflow: hidden;
 }
 
@@ -61,8 +61,7 @@ html, body{
 #page{
     width: 100%;
     height: 100%;
-    background-color: #2b2d30;
-    /* 左右底部边框 */
+    background-color: rgba(0, 0, 0, 0);
 }
 
 #router-page {

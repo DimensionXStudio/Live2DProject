@@ -1,8 +1,6 @@
 <template>
     <div id="main-page">
-        <el-card id="main-card">
-            <canvas id="canvas-view"></canvas>
-        </el-card>
+        <canvas id="canvas-view"></canvas>
     </div>
 </template>
 
@@ -35,7 +33,7 @@ export default {
                 // 配置模型舞台
                 view: document.getElementById('canvas-view'),
                 // 背景是否透明
-                transparent: true,
+                backgroundAlpha: 0,
                 autoDensity:true,
                 autoResize: true,
                 antialias: true,
@@ -64,17 +62,11 @@ export default {
 
 <style scoped>
 #main-page {
-    width: 100%;
-    height: 100%;
-    display: block;
-    margin: auto;
-}
-
-#main-card {
     width: 99%;
     height: 380px;
     margin: 20px auto;
     display: block;
+    /*透明背景 */
+    background: rgba(0, 0, 0, 0);
 }
-
 </style>

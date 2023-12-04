@@ -10,10 +10,6 @@ const {ipcRenderer} = require('electron')
 const style = {
     min: {
         backgroundColor: 'white',
-        right:'65px'
-    },
-    max: {
-        backgroundColor: 'yellow',
         right:'40px'
     },
     close: {
@@ -48,7 +44,4 @@ export default {
     cursor: pointer;
 }
 
-.titlebtn:hover{
-    border: 1px solid rgba(248, 242, 242, 0.6);
-}
 </style>
