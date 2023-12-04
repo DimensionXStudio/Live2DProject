@@ -1,20 +1,58 @@
 <template>
     <div id="main-page">
         <el-card id="main-card">
+            <canvas id="canvas-view"></canvas>
         </el-card>
     </div>
 </template>
 
 <script>
+import {Live2DModel, MotionPreloadStrategy, InternalModel} from 'pixi-live2d-display';
 export default {
     name: "MainPage",
     data() {
         return {
+            model: null,
+            app: null
         }
     },
 
-    methods: {
+    mounted() {
+        // 初始化模型
+        this.initModel();
+    },
 
+    methods: {
+        async initModel() {
+            const model = await Live2DModel.from('../../src/assets/model2/HK416_805/normal.model3.json',
+                { motionPreload: MotionPreloadStrategy.NONE,  })
+            const app = new PIXI.Application({
+                // 配置模型舞台
+                view: document.getElementById('canvas-view'),
+                // 背景是否透明
+                transparent: true,
+                autoDensity:true,
+                autoResize: true,
+                antialias: true,
+                // 高度
+                height: '360',
+                // 宽度
+                width:'420'
+            })
+
+            //model.trackedPointers = [{ id: 1, type: 'pointerdown', flags: true }, { id: 2, type: 'mousemove', flags: true }]
+            // 添加模型到舞台
+            app.stage.addChild(model)
+            // 模型的缩放
+            model.scale.set(0.07)
+            // 模型的位置,x,y相较于窗口左上角
+            model.x = 0
+            // 添加模型状态管理器
+            model.InternalModel = new InternalModel(model)
+
+            this.app = app
+            this.model = model
+        }
     }
 }
 </script>
@@ -29,7 +67,8 @@ export default {
 
 #main-card {
     width: 99%;
-    margin: 120px auto;
+    height: 380px;
+    margin: 20px auto;
     display: block;
 }
 
