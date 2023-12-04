@@ -8,6 +8,7 @@
 
 <script>
 import {Live2DModel, MotionPreloadStrategy, InternalModel} from 'pixi-live2d-display';
+import * as PIXI from 'pixi.js'
 export default {
     name: "MainPage",
     data() {
@@ -18,13 +19,17 @@ export default {
     },
 
     mounted() {
-        // 初始化模型
-        this.initModel();
+        this.loadEnv()
     },
 
     methods: {
+        loadEnv() {
+            window.PIXI = PIXI;
+            this.initModel();
+        },
+
         async initModel() {
-            const model = await Live2DModel.from('../../src/assets/model2/HK416_805/normal.model3.json',
+            const model = await Live2DModel.from('./model2/HK416_805/normal.model3.json',
                 { motionPreload: MotionPreloadStrategy.NONE,  })
             const app = new PIXI.Application({
                 // 配置模型舞台

@@ -12,13 +12,11 @@
 
 <script>
 import HeaderComp from '@/components/HeaderComp.vue';
-import * as PIXI from 'pixi.js'
 export default {
     name: 'App',
     components: {HeaderComp},
     mounted() {
-        // 挂载pixi
-        window.PIXI = PIXI;
+
     },
     // 给子组件provide
     provide() {

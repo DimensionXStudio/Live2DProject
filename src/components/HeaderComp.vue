@@ -12,7 +12,7 @@
         <el-menu-item class="header-item-no-drag" index="0" @click="navigateTo('/')">
             <img
                 style="width: 100px"
-                src="../assets/element-plus-logo.svg"
+                src="../../public/element-plus-logo.svg"
                 alt="Element logo"
             />
         </el-menu-item>

@@ -19,8 +19,5 @@ export default defineConfig({
     proxy: {
     }
   },
-  // build: {
-  //   // 方便debug你别混淆了报错了啥都不知道
-  //   minify: false,
-  // },
+  publicDir: './public',
 })
