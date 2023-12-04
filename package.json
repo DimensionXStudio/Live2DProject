@@ -1,0 +1,64 @@
+{
+  "name": "live2d-pet-project",
+  "private": true,
+  "main": "electron/main/main.js",
+  "version": "0.0.0",
+  "type": "commonjs",
+  "author": "lrsoft",
+  "scripts": {
+    "start-client": "nodemon --exec electron . --watch ./ --ext .js,.html,.css,.vue",
+    "start-website": "vite",
+    "build-website": "vite build",
+    "dist-all": "vite build && electron-builder"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.1.0",
+    "element-plus": "2.4.1",
+    "pinia": "^2.1.7",
+    "pinia-plugin-persist": "^1.0.0",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.2.3",
+    "electron": "^22.3.23",
+    "electron-builder": "^24.6.4",
+    "nodemon": "^3.0.1",
+    "vite": "^4.4.5"
+  },
+  "build": {
+    "productName": "live2dPet",
+    "appId": "live2d-pet-project",
+    "asar": true,
+    "directories": {
+      "output": "release/${version}"
+    },
+    "files": [
+      "dist",
+      "electron"
+    ],
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "mac": {
+      "category": "net.lrsoft.live2dpet"
+    },
+    "win": {
+      "icon": "./electron/log.ico",
+      "target": [
+        {
+          "target": "nsis"
+        }
+      ]
+    },
+    "linux": {
+      "category": "Utility",
+      "target": [
+        {
+          "target": "AppImage"
+        }
+      ]
+    }
+  }
+}
