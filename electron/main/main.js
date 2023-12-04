@@ -12,7 +12,7 @@ process.env.DIST = join(__dirname, "../../")
 const indexHtml = join(process.env.DIST, 'dist/index.html')
 const createWindow = () => {
 	const win = new BrowserWindow({
-		width: 800,
+		width: 420,
 		height: 500,
 		frame: false,
 		transparent: true,
