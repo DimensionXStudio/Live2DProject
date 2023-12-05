@@ -1,8 +1,8 @@
 const { app, BrowserWindow, Menu, ipcMain } = require("electron");
 const {join} = require("path");
 const {initElectronTitleButtonFunction} = require("./ClientController");
-const path = require("path")
-import { env } from '@xenova/transformers';
+const {initTransform} = require("../utils/GTransform")
+
 
 // 禁止显示默认菜单
 Menu.setApplicationMenu(null);
@@ -10,10 +10,6 @@ Menu.setApplicationMenu(null);
 const ipc = ipcMain;
 
 process.env.DIST = join(__dirname, "../../");
-
-env.allowRemoteModels = false;
-env.allowLocalModels = true;
-env.backends.onnx.wasm.wasmPaths = path.join(__dirname, "../models/wasm/");
 
 const indexHtml = join(process.env.DIST, 'dist/index.html')
 const createWindow = () => {
@@ -50,6 +46,7 @@ const createWindow = () => {
 	});
 
 	initElectronTitleButtonFunction(ipc, win);
+	initTransform(ipc, win);
 }
 
 app.whenReady().then(()=>{

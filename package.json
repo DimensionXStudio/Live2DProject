@@ -6,7 +6,7 @@
   "type": "commonjs",
   "author": "lrsoft",
   "scripts": {
-    "start-client": "nodemon --exec \"electron electron/main/main.js\" --watch ./ --ext .js,.html,.css,.vue",
+    "start-client": "nodemon --exec \"electron .\" --watch ./ --ext .js,.html,.css,.vue",
     "start-website": "vite",
     "build-website": "vite build",
     "dist-all": "vite build && electron-builder"
