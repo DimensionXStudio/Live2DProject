@@ -1,8 +1,9 @@
 {
-  "_name_or_path": "/home/awaheed/scratch/InstructTuning/flan-t5-large-distil-v2_checkpoint/checkpoint-12500",
+  "_name_or_path": "MBZUAI/LaMini-Flan-T5-783M",
   "architectures": [
     "T5ForConditionalGeneration"
   ],
+  "classifier_dropout": 0.0,
   "d_ff": 2816,
   "d_kv": 64,
   "d_model": 1024,
@@ -25,8 +26,7 @@
   "relative_attention_max_distance": 128,
   "relative_attention_num_buckets": 32,
   "tie_word_embeddings": false,
-  "torch_dtype": "float32",
-  "transformers_version": "4.28.0.dev0",
+  "transformers_version": "4.34.0.dev0",
   "use_cache": true,
   "vocab_size": 32128
 }

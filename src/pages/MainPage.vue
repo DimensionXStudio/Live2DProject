@@ -4,7 +4,7 @@
         <!--flex后子元素间留个空间-->
         <div style="width: 99%; height: 35px; display: flex; flex-direction: row; justify-content: space-between ">
             <el-input v-model="inputText" placeholder="我想说..."></el-input>
-            <el-button @click="sendMessage">发送 </el-button>
+            <el-button @click="sendMessage">发送</el-button>
         </div>
 
     </div>
@@ -13,6 +13,9 @@
 <script>
 import {Live2DModel, MotionPreloadStrategy, InternalModel} from 'pixi-live2d-display';
 import * as PIXI from 'pixi.js'
+import ServiceApi from "@/services/ServiceApi";
+import {ElMessage} from "element-plus";
+
 export default {
     name: "MainPage",
     data() {
@@ -23,15 +26,29 @@ export default {
 
             // 输入框文字
             inputText: '',
+
+            responseEventName: "inferenceResponseEvent",
         }
     },
 
     mounted() {
         this.loadEnv()
         this.loadLLM()
+        ServiceApi.RegistResponseEvent(this.responseEventName, this.handleInferenceResponseEvent)
+    },
+
+    unmounted() {
+        ServiceApi.UnregistResponseEvent(this.responseEventName, this.handleInferenceResponseEvent)
     },
 
     methods: {
+        handleInferenceResponseEvent(event, args) {
+            let result = JSON.parse(args)
+            const text = result[0]["generated_text"]
+            ElMessage.success(text)
+            console.log(args)
+        },
+
         loadEnv() {
             window.PIXI = PIXI;
             this.initL2DModel();
@@ -39,19 +56,19 @@ export default {
 
         async initL2DModel() {
             const model = await Live2DModel.from('./model2/HK416_805/normal.model3.json',
-                { motionPreload: MotionPreloadStrategy.NONE,  })
+                {motionPreload: MotionPreloadStrategy.NONE,})
             const app = new PIXI.Application({
                 // 配置模型舞台
                 view: document.getElementById('canvas-view'),
                 // 背景是否透明
                 backgroundAlpha: 0,
-                autoDensity:true,
+                autoDensity: true,
                 autoResize: true,
                 antialias: true,
                 // 高度
                 height: '360',
                 // 宽度
-                width:'420'
+                width: '420'
             })
 
             //model.trackedPointers = [{ id: 1, type: 'pointerdown', flags: true }, { id: 2, type: 'mousemove', flags: true }]
@@ -72,10 +89,11 @@ export default {
         },
 
         async sendMessage() {
-            if(this.inputText === '') {
+            if (this.inputText === '') {
                 return
             }
 
+            ServiceApi.StartInference(this.responseEventName, this.inputText)
         }
     }
 }
