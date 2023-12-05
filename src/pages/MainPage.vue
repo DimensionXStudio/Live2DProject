@@ -1,6 +1,12 @@
 <template>
     <div id="main-page">
         <canvas id="canvas-view"></canvas>
+        <!--flex后子元素间留个空间-->
+        <div style="width: 99%; height: 35px; display: flex; flex-direction: row; justify-content: space-between ">
+            <el-input v-model="inputText" placeholder="我想说..."></el-input>
+            <el-button @click="sendMessage">发送 </el-button>
+        </div>
+
     </div>
 </template>
 
@@ -12,7 +18,9 @@ export default {
     data() {
         return {
             model: null,
-            app: null
+            app: null,
+
+            inputText: ''
         }
     },
 
@@ -55,6 +63,10 @@ export default {
 
             this.app = app
             this.model = model
+        },
+
+        sendMessage() {
+            console.log(this.inputText)
         }
     }
 }
@@ -65,7 +77,8 @@ export default {
     width: 99%;
     height: 380px;
     margin: 20px auto;
-    display: block;
+    display: flex;
+    flex-direction: column;
     /*透明背景 */
     background: rgba(0, 0, 0, 0);
 }

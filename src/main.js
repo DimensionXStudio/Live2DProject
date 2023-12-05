@@ -11,8 +11,6 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import 'element-plus/theme-chalk/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import zhCn from "element-plus/dist/locale/zh-cn.mjs"
-import * as live2d from "../public/live2d.min.js"
-import * as cubismcore from "../public/live2dcubismcore.min.js"
 
 import router from "@/router";
 
@@ -26,8 +24,6 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 
 app.use(pinia)
-app.use(live2d)
-app.use(cubismcore)
 app.use(ElementPlus,  {locale: zhCn})
 app.use(router)
 app.mount('#app')

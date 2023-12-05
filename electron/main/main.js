@@ -25,6 +25,8 @@ const createWindow = () => {
 			enableRemoteModule: true
 		}
 	})
+	// 窗口置顶，打包后才能生效
+	win.setAlwaysOnTop(true, 'screen');
 
 	// 是否开发环境
 	if (!app.isPackaged) {
@@ -32,6 +34,7 @@ const createWindow = () => {
 		content.openDevTools()
 		win.loadURL("http://localhost:5173/")
 	}else{
+
 		win.loadFile(indexHtml)
 	}
 
