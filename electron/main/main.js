@@ -19,11 +19,12 @@ const createWindow = () => {
 		backgroundColor: '#00000000',
 		useContentSize: true,
 		// 要导出electron给vue用，必须设置nodeIntegration为true
+		// 同时开启webgl和webgpu
 		webPreferences: {
 			nodeIntegration: true,
 			contextIsolation: false,
-			enableRemoteModule: true
-		}
+			enableRemoteModule: true,
+		},
 	})
 	// 窗口置顶，打包后才能生效
 	win.setAlwaysOnTop(true, 'screen');
@@ -34,7 +35,6 @@ const createWindow = () => {
 		content.openDevTools()
 		win.loadURL("http://localhost:5173/")
 	}else{
-
 		win.loadFile(indexHtml)
 	}
 

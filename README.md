@@ -17,7 +17,7 @@ npm install -g cnpm --registry=https://registry.npm.taobao.org
 npm install
 ```
 
-若使用cnpm，则把所有npm替换成cnpm即可
+若使用cnpm，则把所有npm命令替换成cnpm即可，还是装不上卡住的就直接tm走yarn install
 
 ## 开发中常用命令
 开启预览模式

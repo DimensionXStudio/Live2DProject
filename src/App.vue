@@ -26,7 +26,6 @@ export default {
     },
     data() {
         return {
-
             // 是否需要刷新header
             headerNeedRefresh: true
         }

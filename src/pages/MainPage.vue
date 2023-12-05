@@ -17,24 +17,27 @@ export default {
     name: "MainPage",
     data() {
         return {
+            // live2d模型
             model: null,
             app: null,
 
-            inputText: ''
+            // 输入框文字
+            inputText: '',
         }
     },
 
     mounted() {
         this.loadEnv()
+        this.loadLLM()
     },
 
     methods: {
         loadEnv() {
             window.PIXI = PIXI;
-            this.initModel();
+            this.initL2DModel();
         },
 
-        async initModel() {
+        async initL2DModel() {
             const model = await Live2DModel.from('./model2/HK416_805/normal.model3.json',
                 { motionPreload: MotionPreloadStrategy.NONE,  })
             const app = new PIXI.Application({
@@ -65,8 +68,14 @@ export default {
             this.model = model
         },
 
-        sendMessage() {
-            console.log(this.inputText)
+        async loadLLM() {
+        },
+
+        async sendMessage() {
+            if(this.inputText === '') {
+                return
+            }
+
         }
     }
 }
