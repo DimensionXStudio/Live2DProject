@@ -1,7 +1,7 @@
 const { app, BrowserWindow, Menu, ipcMain } = require("electron");
 const {join} = require("path");
 const {initElectronTitleButtonFunction} = require("./ClientController");
-const {initTransform} = require("../utils/GTransform")
+const {initTransform} = require("../utils/TransformsJSWrapper")
 
 
 // 禁止显示默认菜单
