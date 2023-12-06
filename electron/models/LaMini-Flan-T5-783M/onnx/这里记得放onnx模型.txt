@@ -1,0 +1,2 @@
+链接：https://huggingface.co/Xenova/LaMini-Flan-T5-783M/tree/main/onnx
+下载encoder_model_quantized.onnx和decoder_model_merged_quantized.onnx

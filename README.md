@@ -19,6 +19,12 @@ npm install
 
 若使用cnpm，则把所有npm命令替换成cnpm即可，还是装不上卡住的就直接tm走yarn install
 
+最后，从https://huggingface.co/Xenova/LaMini-Flan-T5-783M/tree/main/onnx
+下载onnx模型，放到electron/models/LaMini-Flan-T5-783M/onnx下，完成模型放置
+
+理论上能兼容Transform.js的LLM模型（ONNX格式）都能直接使用
+
+
 ## 开发中常用命令
 开启预览模式
 ```bash
