@@ -34,13 +34,24 @@
     "productName": "live2dPet",
     "appId": "live2d-pet-project",
     "asar": true,
+    "extraResources": [
+      {
+        "from": "modules",
+        "to": "modules"
+      },
+      {
+        "from": "models",
+        "to": "models"
+      }
+    ],
     "directories": {
       "output": "release/${version}"
     },
     "files": [
       "dist",
       "electron",
-      "models"
+      "models",
+      "modules"
     ],
     "nsis": {
       "oneClick": false,

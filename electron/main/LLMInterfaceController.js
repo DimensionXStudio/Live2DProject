@@ -4,7 +4,7 @@ const ref = require('ref-napi');
 class LLMInterfaceController {
 	static GLOBAL_LIB = null;
 	static initLLMModule(ipc, win) {
-		const dllPath = path.join(__dirname, "../modules/libLLMInterfaceProject");
+		const dllPath = path.resolve("modules/libLLMInterfaceProject");
 
 		// 我们压根不需要知道c++的类型，只需要知道是tmd的指针
 		var voidType = ref.types.void
