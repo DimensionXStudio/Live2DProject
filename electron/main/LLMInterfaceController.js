@@ -3,8 +3,14 @@ const ffi = require('ffi-napi');
 const ref = require('ref-napi');
 class LLMInterfaceController {
 	static GLOBAL_LIB = null;
-	static initLLMModule(ipc, win) {
-		const dllPath = path.resolve("modules/libLLMInterfaceProject");
+	static initLLMModule(app, ipc, win) {
+		let dllPath = path.resolve("./modules/libLLMInterfaceProject");
+		// 检测是否打包环境
+		if(app.isPackaged){
+			dllPath = path.resolve("./resources/modules/libLLMInterfaceProject");
+		}
+
+		console.log("dllpath: " + dllPath)
 
 		// 我们压根不需要知道c++的类型，只需要知道是tmd的指针
 		var voidType = ref.types.void
@@ -31,18 +37,17 @@ class LLMInterfaceController {
 		// 加载模型
 		if(LLMInterfaceController.GLOBAL_LIB.init_gpt2_model(model, vocab, params)) {
 			console.log("load model GPT2 117M success")
+			// 加载后端
+			var sched = LLMInterfaceController.GLOBAL_LIB.get_default_sched()
+			LLMInterfaceController.GLOBAL_LIB.create_backend_sched(model, sched, params)
+			var result = LLMInterfaceController.GLOBAL_LIB.text2text_generate(model, vocab, sched, params, "hello from electron!")
+			console.log(result)
+
+			// 释放资源
+			LLMInterfaceController.GLOBAL_LIB.free_resource(model, sched)
 		}else{
 			console.log("load model GPT2 117M failed")
 		}
-
-		// 加载后端
-		var sched = LLMInterfaceController.GLOBAL_LIB.get_default_sched()
-		LLMInterfaceController.GLOBAL_LIB.create_backend_sched(model, sched, params)
-		var result = LLMInterfaceController.GLOBAL_LIB.text2text_generate(model, vocab, sched, params, "hello from electron!")
-		console.log(result)
-
-		// 释放资源
-		LLMInterfaceController.GLOBAL_LIB.free_resource(model, sched)
 	}
 }
 

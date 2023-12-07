@@ -19,10 +19,18 @@ npm install
 
 若使用cnpm，则把所有npm命令替换成cnpm即可，还是装不上卡住的就直接tm走yarn install
 
-最后，从https://huggingface.co/Xenova/LaMini-Flan-T5-783M/tree/main/onnx
-下载onnx模型，放到electron/models/LaMini-Flan-T5-783M/onnx下，完成模型放置
+安装最新版本的Python并设置环境变量
 
-理论上能兼容Transform.js的LLM模型（ONNX格式）都能直接使用
+```bash
+--linux平台
+export npm_config_python=/path/to/executable/python
+
+-- windows平台
+set npm_config_python=C:\path\to\python.exe
+```
+
+使用cnpm install后，可能npm run dist-all打包会爆炸，其实就是包没装全，
+再使用npm install一次就好了
 
 
 ## 开发中常用命令

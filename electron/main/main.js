@@ -46,7 +46,7 @@ const createWindow = () => {
 	});
 
 	initElectronTitleButtonFunction(ipc, win);
-	initLLMModule(ipc, win);
+	initLLMModule(app, ipc, win);
 }
 
 app.whenReady().then(()=>{
