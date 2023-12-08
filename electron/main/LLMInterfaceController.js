@@ -5,9 +5,11 @@ class LLMInterfaceController {
 	static GLOBAL_LIB = null;
 	static initLLMModule(app, ipc, win) {
 		let dllPath = path.resolve("./modules/libLLMInterfaceProject");
+		let modelPath = path.resolve("./models/gpt-2-117M/ggml-model.bin");
 		// 检测是否打包环境
 		if(app.isPackaged){
-			dllPath = path.resolve("./resources/modules/libLLMInterfaceProject");
+			dllPath = path.resolve("./libLLMInterfaceProject");
+			modelPath = path.resolve("./models/gpt-2-117M/ggml-model.bin");
 		}
 
 		console.log("dllpath: " + dllPath)
@@ -20,7 +22,7 @@ class LLMInterfaceController {
 			'init_global_env': ['void', []],
 			'get_default_model': [voidPtr, []],
 			'get_default_vocab': [voidPtr, []],
-			'get_default_params': [voidPtr, []],
+			'get_default_params': [voidPtr, ["string"]],
 			'get_default_sched': [voidPtr, []],
 			'init_gpt2_model': ['bool', [voidPtr, voidPtr, voidPtr]],
 			'create_backend_sched': ['void', [voidPtr, voidPtr, voidPtr]],
@@ -30,9 +32,9 @@ class LLMInterfaceController {
 
 		LLMInterfaceController.GLOBAL_LIB.init_global_env()
 
+		var params = LLMInterfaceController.GLOBAL_LIB.get_default_params(modelPath)
 		var model = LLMInterfaceController.GLOBAL_LIB.get_default_model()
 		var vocab = LLMInterfaceController.GLOBAL_LIB.get_default_vocab()
-		var params = LLMInterfaceController.GLOBAL_LIB.get_default_params()
 
 		// 加载模型
 		if(LLMInterfaceController.GLOBAL_LIB.init_gpt2_model(model, vocab, params)) {

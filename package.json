@@ -36,12 +36,12 @@
     "asar": true,
     "extraResources": [
       {
-        "from": "modules",
-        "to": "modules"
+        "from": "./modules",
+        "to": "../"
       },
       {
-        "from": "models",
-        "to": "models"
+        "from": "./models",
+        "to": "../models"
       }
     ],
     "directories": {
@@ -49,9 +49,7 @@
     },
     "files": [
       "dist",
-      "electron",
-      "models",
-      "modules"
+      "electron"
     ],
     "nsis": {
       "oneClick": false,
