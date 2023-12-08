@@ -43,10 +43,8 @@ export default {
 
     methods: {
         handleInferenceResponseEvent(event, args) {
-            let result = JSON.parse(args)
-            const text = result[0]["generated_text"]
-            ElMessage.success(text)
             console.log(args)
+            ElMessage.success(args)
         },
 
         loadEnv() {
