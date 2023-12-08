@@ -1,7 +1,7 @@
 const { app, BrowserWindow, Menu, ipcMain } = require("electron");
 const {join} = require("path");
 const {initElectronTitleButtonFunction} = require("./ClientController");
-const {initTransform} = require("../utils/TransformsJSWrapper")
+const {initLLMModule} = require("./LLMInterfaceController")
 
 
 // 禁止显示默认菜单
@@ -46,7 +46,7 @@ const createWindow = () => {
 	});
 
 	initElectronTitleButtonFunction(ipc, win);
-	initTransform(ipc, win);
+	initLLMModule(app, ipc, win);
 }
 
 app.whenReady().then(()=>{
