@@ -1,6 +1,5 @@
 const path = require("path");
-const ffi = require('ffi-napi');
-const ref = require('ref-napi');
+const koffi = require('koffi');
 class LLMInterfaceController {
 	static GLOBAL_LIB = null;
 	static initLLMModule(app, ipc, win) {
@@ -14,41 +13,37 @@ class LLMInterfaceController {
 
 		console.log("dllpath: " + dllPath)
 
-		// 我们压根不需要知道c++的类型，只需要知道是tmd的指针
-		var voidType = ref.types.void
-		var voidPtr = ref.refType(voidType)
+		const libLLM = koffi.load(dllPath)
+		const init_global_env = libLLM.func('void init_global_env()');
+		const get_default_model = libLLM.func('void* get_default_model()');
+		const get_default_vocab = libLLM.func('void* get_default_vocab()');
+		const get_default_params = libLLM.func('void* get_default_params(const char* model_path)');
+		const get_default_sched = libLLM.func('void* get_default_sched()');
+		const init_gpt2_model = libLLM.func('bool init_gpt2_model(void* model, void* vocab, void* params)');
+		const create_backend_sched = libLLM.func('void create_backend_sched(void* model, void* sched, void* params)');
+		const text2text_generate = libLLM.func('char* text2text_generate(void* model, void* vocab, void* sched, void* params, const char*)');
+		const free_resource = libLLM.func('void free_resource(void* model, void* sched)');
 
-		LLMInterfaceController.GLOBAL_LIB = ffi.Library(dllPath, {
-			'init_global_env': ['void', []],
-			'get_default_model': [voidPtr, []],
-			'get_default_vocab': [voidPtr, []],
-			'get_default_params': [voidPtr, ["string"]],
-			'get_default_sched': [voidPtr, []],
-			'init_gpt2_model': ['bool', [voidPtr, voidPtr, voidPtr]],
-			'create_backend_sched': ['void', [voidPtr, voidPtr, voidPtr]],
-			'text2text_generate': ['string', [voidPtr, voidPtr, voidPtr, voidPtr, "string"]],
-			'free_resource': ['void', [voidPtr, voidPtr]]
-		})
+		// 初始化全局环境
+		init_global_env()
 
-		LLMInterfaceController.GLOBAL_LIB.init_global_env()
-
-		var params = LLMInterfaceController.GLOBAL_LIB.get_default_params(modelPath)
-		var model = LLMInterfaceController.GLOBAL_LIB.get_default_model()
-		var vocab = LLMInterfaceController.GLOBAL_LIB.get_default_vocab()
+		var params = get_default_params(modelPath)
+		var model = get_default_model()
+		var vocab = get_default_vocab()
 
 		// 加载模型
-		if(LLMInterfaceController.GLOBAL_LIB.init_gpt2_model(model, vocab, params)) {
-			console.log("load model GPT2 117M success")
+		if(init_gpt2_model(model, vocab, params)) {
+			console.log("load model GPT2 success")
 			// 加载后端
-			var sched = LLMInterfaceController.GLOBAL_LIB.get_default_sched()
-			LLMInterfaceController.GLOBAL_LIB.create_backend_sched(model, sched, params)
-			var result = LLMInterfaceController.GLOBAL_LIB.text2text_generate(model, vocab, sched, params, "hello from electron!")
+			var sched = get_default_sched()
+			create_backend_sched(model, sched, params)
+			var result = text2text_generate(model, vocab, sched, params, "hello from electron!")
 			console.log(result)
 
 			// 释放资源
-			LLMInterfaceController.GLOBAL_LIB.free_resource(model, sched)
+			free_resource(model, sched)
 		}else{
-			console.log("load model GPT2 117M failed")
+			console.log("load model GPT2 failed")
 		}
 	}
 }
