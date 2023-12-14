@@ -1,0 +1,21 @@
+{
+    "model_lib": "MiniChat-1.5-3B-q4f16_1",
+    "local_id": "MiniChat-1.5-3B-q4f16_1",
+    "conv_template": "llama_live2d",
+    "temperature": 0.7,
+    "repetition_penalty": 1.0,
+    "top_p": 0.95,
+    "mean_gen_len": 128,
+    "max_gen_len": 4096,
+    "num_shards": 1,
+    "use_presharded_weights": false,
+    "shift_fill_factor": 0.3,
+    "tokenizer_files": [
+        "tokenizer.json"
+    ],
+    "model_category": "llama",
+    "model_name": "MiniChat-1.5-3B",
+    "vocab_size": 49216,
+    "prefill_chunk_size": -1,
+    "max_window_size": 4096
+}
