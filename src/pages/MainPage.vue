@@ -28,17 +28,20 @@ export default {
             inputText: '',
 
             responseEventName: "inferenceResponseEvent",
+            // 错误事件名
+            errorEventName: "inferenceErrorEvent"
         }
     },
 
     mounted() {
         this.loadEnv()
-        this.loadLLM()
         ServiceApi.RegistResponseEvent(this.responseEventName, this.handleInferenceResponseEvent)
+        ServiceApi.RegistResponseEvent(this.errorEventName, this.handleOnError)
     },
 
     unmounted() {
         ServiceApi.UnregistResponseEvent(this.responseEventName, this.handleInferenceResponseEvent)
+        ServiceApi.UnregistResponseEvent(this.errorEventName, this.handleOnError)
     },
 
     methods: {
@@ -47,9 +50,14 @@ export default {
             ElMessage.success(args)
         },
 
+        handleOnError(event, args) {
+            console.log(args)
+            ElMessage.error(args)
+        },
+
         loadEnv() {
             window.PIXI = PIXI;
-            this.initL2DModel();
+            //this.initL2DModel();
         },
 
         async initL2DModel() {
@@ -83,15 +91,15 @@ export default {
             this.model = model
         },
 
-        async loadLLM() {
-        },
-
-        async sendMessage() {
+        sendMessage() {
             if (this.inputText === '') {
                 return
             }
 
-            ServiceApi.StartInference(this.responseEventName, this.inputText)
+            // 发送消息
+            ServiceApi.AddNewPrompt(this.errorEventName, this.inputText)
+            // 开始轮询getPromptResult
+            ServiceApi.GetPromptResult(this.responseEventName)
         }
     }
 }
