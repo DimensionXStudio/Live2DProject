@@ -3,10 +3,8 @@ const koffi = require('koffi');
 class LLMInterfaceController {
 	static _WIN = null
 	static GLOBAL_FUNC_DICT = {};
-	static GLOBAL_PARAMS = null;
 	static GLOBAL_MODEL = null;
-	static GLOBAL_VOCAB = null;
-	static GLOBAL_SCHED = null;
+	static GLOBAL_MODEL_ID = "MiniChat-1.5-3B-q4f16_1";
 	static IS_INIT = false;
 	static IS_PACKAGE_ENV = true;
 	static initLLMModule(app, ipc, win) {
@@ -15,97 +13,101 @@ class LLMInterfaceController {
 		LLMInterfaceController.TryInit(null)
 		// 提供给前端的接口
 		ipc.on('backend-init', LLMInterfaceController.TryInit)
-		ipc.on('backend-inference', LLMInterfaceController.GetInterfaceResult)
-		ipc.on('backend-release', LLMInterfaceController.TryRelease)
+		ipc.on('backend-add-new-prompt', LLMInterfaceController.AddNewPrompt)
+		ipc.on('backend-get-prompt-result', LLMInterfaceController.GetPromptResult)
 	}
 
 	static TryInit(event) {
 		if(LLMInterfaceController.IS_INIT) return;
 
-		let dllPath = path.resolve("./modules/libLLMInterfaceProject");
-		let modelPath = path.resolve("./models/gpt-2-117M/ggml-model.bin");
+		let dllPath = path.resolve("./modules/LLMInterfaceProject");
+		let modelPath = path.resolve("./models/");
 		// 检测是否打包环境
 		if(LLMInterfaceController.IS_PACKAGE_ENV){
-			dllPath = path.resolve("./libLLMInterfaceProject");
-			modelPath = path.resolve("./models/gpt-2-117M/ggml-model.bin");
+			dllPath = path.resolve("./LLMInterfaceProject");
+			modelPath = path.resolve("./models/");
 		}
 
 		console.log("dllpath: " + dllPath);
 
 		const libLLM = koffi.load(dllPath)
-		const init_global_env = libLLM.func('void init_global_env()');
-		const get_default_model = libLLM.func('void* get_default_model()');
-		const get_default_vocab = libLLM.func('void* get_default_vocab()');
-		const get_default_params = libLLM.func('void* get_default_params(const char* model_path)');
-		const get_default_sched = libLLM.func('void* get_default_sched()');
-		const init_gpt2_model = libLLM.func('bool init_gpt2_model(void* model, void* vocab, void* params)');
-		const create_backend_sched = libLLM.func('void create_backend_sched(void* model, void* sched, void* params)');
-		const text2text_generate = libLLM.func('char* text2text_generate(void* model, void* vocab, void* sched, void* params, const char*)');
-		const free_resource = libLLM.func('void free_resource(void* model, void* sched)');
+		const load_global_env = libLLM.func('void init_global_env()')
+		const load_model_path_async = libLLM.func('void load_model_path_async(const char* search_path, const char* model_id)');
+		const check_model_valid = libLLM.func('int check_model_valid(const char* model_id)');
+		const wait_to_check_model_valid = libLLM.func('int wait_to_check_model_valid(const char* model_id, int timeout)');
+
+		const add_new_prompt = libLLM.func('void add_new_prompt(const char* model_id, const char* prompt)');
+		const get_model_response = libLLM.func('const char* get_model_response(const char* model_id)');
+		const wait_to_get_model_response = libLLM.func('const char* wait_to_get_model_response(const char* model_id, int timeout)');
+		const finalize_global_env = libLLM.func('void finalize_global_env()');
 
 		// 记录DLL全局函数字典
 		LLMInterfaceController.GLOBAL_FUNC_DICT = {
-			init_global_env: init_global_env,
-			get_default_model: get_default_model,
-			get_default_vocab: get_default_vocab,
-			get_default_params: get_default_params,
-			get_default_sched: get_default_sched,
-			init_gpt2_model: init_gpt2_model,
-			create_backend_sched: create_backend_sched,
-			text2text_generate: text2text_generate,
-			free_resource: free_resource,
+			load_global_env: load_global_env,
+			load_model_path_async: load_model_path_async,
+			check_model_valid: check_model_valid,
+			wait_to_check_model_valid: wait_to_check_model_valid,
+			add_new_prompt: add_new_prompt,
+			get_model_response: get_model_response,
+			wait_to_get_model_response: wait_to_get_model_response,
+			finalize_global_env: finalize_global_env
 		};
 
-		// 初始化全局环境
-		init_global_env();
+		// 启动全局环境
+		load_global_env()
+		// 异步加载模型
+		load_model_path_async(modelPath, LLMInterfaceController.GLOBAL_MODEL_ID)
 
-		LLMInterfaceController.GLOBAL_PARAMS = get_default_params(modelPath);
-		LLMInterfaceController.GLOBAL_MODEL = get_default_model();
-		LLMInterfaceController.GLOBAL_VOCAB = get_default_vocab();
-
-		// 加载模型
-		if(init_gpt2_model(LLMInterfaceController.GLOBAL_MODEL, LLMInterfaceController.GLOBAL_VOCAB, LLMInterfaceController.GLOBAL_PARAMS)) {
-			console.log("load model GPT2 success");
-			// 加载后端
-			LLMInterfaceController.GLOBAL_SCHED = get_default_sched();
-			create_backend_sched(LLMInterfaceController.GLOBAL_MODEL, LLMInterfaceController.GLOBAL_SCHED, LLMInterfaceController.GLOBAL_PARAMS);
-			var result = text2text_generate(
-				LLMInterfaceController.GLOBAL_MODEL,
-				LLMInterfaceController.GLOBAL_VOCAB,
-				LLMInterfaceController.GLOBAL_SCHED,
-				LLMInterfaceController.GLOBAL_PARAMS,
-				"hello from electron!");
-			console.log(result);
-
-			LLMInterfaceController.IS_INIT = true;
-		}else{
-			console.log("load model GPT2 failed");
-			LLMInterfaceController.IS_INIT = false;
-		}
+		// 开始轮询检测模型是否加载完成
+		LLMInterfaceController.CheckModelFinish();
 	}
 
-	static GetInterfaceResult(event, eventName, inputText) {
+	static CheckModelFinish() {
+		setTimeout(() => {
+			console.log("check model valid")
+			const result = LLMInterfaceController.GLOBAL_FUNC_DICT.check_model_valid(
+				LLMInterfaceController.GLOBAL_MODEL_ID);
+			// 返回1加载成功
+			if(result === 1){
+				LLMInterfaceController.IS_INIT = true;
+				LLMInterfaceController._WIN.webContents.send("backend-init", "[INFO] LLM init success");
+				console.log("LLM init success")
+			}else if(result === 0){
+				LLMInterfaceController._WIN.webContents.send("backend-init-fail", "[INFO] LLM init success");
+				console.log("LLM init fail")
+			}else{
+				// see you next time
+				LLMInterfaceController.CheckModelFinish();
+			}
+		}, 1000);
+	}
+
+	static AddNewPrompt(event, eventName, inputText) {
 		if(!LLMInterfaceController.IS_INIT){
 			LLMInterfaceController._WIN.webContents.send(eventName, "[ERROR] LLM is not init");
 		}
 
-		let generateResult = LLMInterfaceController.GLOBAL_FUNC_DICT.text2text_generate(
-			LLMInterfaceController.GLOBAL_MODEL,
-			LLMInterfaceController.GLOBAL_VOCAB,
-			LLMInterfaceController.GLOBAL_SCHED,
-			LLMInterfaceController.GLOBAL_PARAMS,
+		console.log("AddNewPrompt: " + inputText)
+		LLMInterfaceController.GLOBAL_FUNC_DICT.add_new_prompt(
+			LLMInterfaceController.GLOBAL_MODEL_ID,
 			inputText)
-		console.log(generateResult)
-		LLMInterfaceController._WIN.webContents.send(eventName, generateResult);
 	}
 
-	static TryRelease(event) {
-		if(LLMInterfaceController.IS_INIT){
-			LLMInterfaceController.GLOBAL_FUNC_DICT.free_resource(
-				LLMInterfaceController.GLOBAL_MODEL,
-				LLMInterfaceController.GLOBAL_SCHED)
+	static GetPromptResult(event, eventName) {
+		if(!LLMInterfaceController.IS_INIT){
+			LLMInterfaceController._WIN.webContents.send(eventName, "[ERROR] LLM is not init");
+		}
 
-			LLMInterfaceController.IS_INIT = false
+		const generateResult = LLMInterfaceController.GLOBAL_FUNC_DICT.get_model_response(
+			LLMInterfaceController.GLOBAL_MODEL_ID)
+
+		if(generateResult !== null && generateResult.length > 0){
+			LLMInterfaceController._WIN.webContents.send(eventName, generateResult);
+		}else{
+			// 等1秒后再次轮询
+			setTimeout(() => {
+				LLMInterfaceController.GetPromptResult(event, eventName);
+			}, 1000);
 		}
 	}
 }

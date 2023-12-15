@@ -1,5 +1,13 @@
 const {ipcRenderer} = require('electron')
 export default {
+    AddNewPrompt(errEventName, inputText){
+        ipcRenderer.send('backend-add-new-prompt', errEventName, inputText)
+    },
+
+    GetPromptResult(responseEventName){
+        ipcRenderer.send('backend-get-prompt-result', responseEventName)
+    },
+
     StartInference(responseEventName, inputText){
         ipcRenderer.send('backend-inference', responseEventName, inputText)
     },
