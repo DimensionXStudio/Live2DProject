@@ -57,7 +57,7 @@ export default {
 
         loadEnv() {
             window.PIXI = PIXI;
-            //this.initL2DModel();
+            this.initL2DModel();
         },
 
         async initL2DModel() {
