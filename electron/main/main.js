@@ -8,12 +8,13 @@ const {initLLMModule} = require("./LLMInterfaceController")
 Menu.setApplicationMenu(null);
 
 const ipc = ipcMain;
+let win = null;
 
 process.env.DIST = join(__dirname, "../../");
 
 const indexHtml = join(process.env.DIST, 'dist/index.html')
 const createWindow = () => {
-	const win = new BrowserWindow({
+	win = new BrowserWindow({
 		width: 420,
 		height: 500,
 		frame: false,
@@ -46,7 +47,6 @@ const createWindow = () => {
 	});
 
 	initElectronTitleButtonFunction(ipc, win);
-	initLLMModule(app, ipc, win);
 }
 
 app.whenReady().then(()=>{
@@ -60,4 +60,7 @@ app.whenReady().then(()=>{
 	app.on("window-all-closed", ()=>{
 		app.quit();
 	});
+
+	// 等ready了再加载模型
+	initLLMModule(app, ipc, win);
 });

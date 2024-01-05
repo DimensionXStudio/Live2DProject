@@ -1,6 +1,14 @@
 <template>
     <div id="main-page">
-        <canvas id="canvas-view"></canvas>
+        <el-popover
+            placement="top"
+            :width="200"
+            trigger="hover"
+            :content="currentResponse">
+            <template #reference>
+                <canvas id="canvas-view"></canvas>
+            </template>
+        </el-popover>
         <!--flex后子元素间留个空间-->
         <div style="width: 99%; height: 35px; display: flex; flex-direction: row; justify-content: space-between ">
             <el-input v-model="inputText" placeholder="我想说..."></el-input>
@@ -27,6 +35,9 @@ export default {
             // 输入框文字
             inputText: '',
 
+            currentResponse: '',
+            popoverVisible: false,
+
             responseEventName: "inferenceResponseEvent",
             // 错误事件名
             errorEventName: "inferenceErrorEvent"
@@ -47,7 +58,15 @@ export default {
     methods: {
         handleInferenceResponseEvent(event, args) {
             console.log(args)
+            this.currentResponse = args
+            // 显示popover
+            this.popoverVisible = true
             ElMessage.success(args)
+
+            // 超时就不显示了
+            setTimeout(() => {
+                this.popoverVisible = false
+            }, 8000)
         },
 
         handleOnError(event, args) {
@@ -76,8 +95,7 @@ export default {
                 // 宽度
                 width: '420'
             })
-
-            //model.trackedPointers = [{ id: 1, type: 'pointerdown', flags: true }, { id: 2, type: 'mousemove', flags: true }]
+            // model.trackedPointers = [{ id: 1, type: 'pointerdown', flags: true }, { id: 2, type: 'mousemove', flags: true }]
             // 添加模型到舞台
             app.stage.addChild(model)
             // 模型的缩放
